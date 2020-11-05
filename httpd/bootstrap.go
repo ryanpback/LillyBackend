@@ -10,7 +10,9 @@ import (
 var appConfig bs.Config
 
 func bootstrap() {
-	c, err := bs.InitConfig()
+	c, err := bs.InitConfig(helpers.GetEnv(isTesting))
+	helpers.AppConfig = c
+
 	if err != nil {
 		helpers.LogFatal(err)
 		helpers.LogFatal(appConfig)
@@ -18,7 +20,6 @@ func bootstrap() {
 	}
 
 	appConfig = c
-	models.AppConfig = appConfig
-	helpers.AppConfig = appConfig
-	handlers.AppConfig = appConfig
+	models.AppConfig = c
+	handlers.AppConfig = c
 }

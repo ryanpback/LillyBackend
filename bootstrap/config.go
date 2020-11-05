@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -18,8 +19,8 @@ type Config struct {
 }
 
 // InitConfig sets the app config
-func InitConfig() (Config, error) {
-	godotenv.Load("../.env")
+func InitConfig(envFile string) (Config, error) {
+	godotenv.Load("../" + envFile)
 
 	multiPartMemLimit, err := strconv.ParseInt(os.Getenv("MULTI_PART_MEM_LIMIT"), 10, 64)
 	if err != nil {
@@ -36,6 +37,16 @@ func InitConfig() (Config, error) {
 	// initialize logging to stdout
 	c.Logger = logrus.New()
 	c.Logger.Out = os.Stdout
+
+	if c.AppPort == "" {
+		return c, fmt.Errorf("APP_PORT is required")
+	}
+	if c.GCSBucket == "" {
+		return c, fmt.Errorf("GCS_BUCKET_NAME is required")
+	}
+	if c.FormFileName == "" {
+		return c, fmt.Errorf("FORM_FILE_NAME is required")
+	}
 
 	return c, nil
 }
